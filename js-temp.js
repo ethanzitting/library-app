@@ -50,12 +50,14 @@ function showBook(arrayIndex) {
 	deleteBtn.textContent = "Delete";
 	deleteBtn.addEventListener('click', () => {
 		// Removes the deleted book from myLibrary
+		arrayIndex = myLibrary.findIndex(x => x.title === this.title);
 		myLibrary.splice(arrayIndex, 1);
 
 		// Remove book card from HTML
 		newCard.parentNode.removeChild(newCard);
 
 		// All the book cards have retained their arrayIndex in memory.
+			// This is causing a bug!
 		// Update arrayIndeces in HTML
 		bookCards = Array.from(document.querySelector("#container").childNodes);
 		bookCards.shift();
@@ -67,6 +69,7 @@ function showBook(arrayIndex) {
 			console.log(j);
 		}
 		console.log(myLibrary);
+		console.table(myLibrary);
 	});
 	newCard.appendChild(deleteBtn);
 
