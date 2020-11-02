@@ -8,7 +8,7 @@ function Book(title, author, pageCount, haveRead) {
 	this.pageCount = pageCount;
 	this.haveRead = haveRead;
 	this.info = function() {
-		return `${title} by ${author}, ${pageCount} pages, ${haveRead ? "read already" : "not read yet"}`;
+		return `${title} by ${author}, ${pageCount} pages, ${haveRead === true ? "Finished" : "Not Finished"}`;
 	}
 }
 
@@ -16,6 +16,9 @@ function Book(title, author, pageCount, haveRead) {
 myLibrary.push(new Book("The Hobbit", "J. R. R. Tolken", 200, true));
 myLibrary.push(new Book("Harry Potter", "J. K. Rowling", 200, true));
 myLibrary.push(new Book("Models", "Mark Mason", 200, true));
+myLibrary.push(new Book("Greenlights", "Matthew McConaughey", 200, false));
+myLibrary.push(new Book("A Promised Land", "Barack Obama", 200, false));
+myLibrary.push(new Book("The Food Lab", "J. Kenji Lopez-Alt", 200, false));
 
 // DOM manipulation begins
 const container = document.querySelector("#container");
@@ -28,7 +31,7 @@ function showBook(arrayIndex) {
 	const p = document.createElement('p');
 	newCard.className = "bookCard";
 	newCard.setAttribute("data-index", `${arrayIndex}`);
-	p.textContent = `${myLibrary[arrayIndex].title} by ${myLibrary[arrayIndex].author}, ${myLibrary[arrayIndex].pageCount} pages, ${myLibrary[arrayIndex].haveRead ? "completed" : "not read yet"}`;
+	p.textContent = `${myLibrary[arrayIndex].title} by ${myLibrary[arrayIndex].author}, ${myLibrary[arrayIndex].pageCount} pages, ${myLibrary[arrayIndex].haveRead === true ? "Finished" : "Not Finished"}`;
 	newCard.appendChild(p);
 
 	// Creates and powers the read/not read button
@@ -37,28 +40,38 @@ function showBook(arrayIndex) {
 	readBtn.textContent = "Read?";
 	readBtn.addEventListener('click', () => {
 		myLibrary[arrayIndex].haveRead = !myLibrary[arrayIndex].haveRead;
-		p.textContent = `${myLibrary[arrayIndex].title} by ${myLibrary[arrayIndex].author}, ${myLibrary[arrayIndex].pageCount} pages, ${myLibrary[arrayIndex].haveRead ? "completed" : "not read yet"}`;
+		p.textContent = `${myLibrary[arrayIndex].title} by ${myLibrary[arrayIndex].author}, ${myLibrary[arrayIndex].pageCount} pages, ${myLibrary[arrayIndex].haveRead === true ? "Finished" : "Not Finished"}`;
 	});
 	newCard.appendChild(readBtn);
 
+	// Creates Delete button
+	const deleteBtn = document.createElement('button');
+	deleteBtn.type="button";
+	deleteBtn.textContent = "Delete";
+	deleteBtn.addEventListener('click', () => {
+		// Removes the deleted book from myLibrary
+		myLibrary.splice(arrayIndex, 1);
+
+		// Remove book card from HTML
+		newCard.parentNode.removeChild(newCard);
+
+		// All the book cards have retained their arrayIndex in memory.
+		// Update arrayIndeces in HTML
+		bookCards = Array.from(document.querySelector("#container").childNodes);
+		bookCards.shift();
+		console.log(bookCards);
+		console.log(`myLibrary.length: ${myLibrary.length}`);
+		for (let i = 0; i < myLibrary.length; i++) {
+			j = bookCards[i];
+			j.setAttribute("data-index", i);
+			console.log(j);
+		}
+		console.log(myLibrary);
+	});
+	newCard.appendChild(deleteBtn);
+
 	// Adds everything to the html
 	container.appendChild(newCard);
-
-	/* TODO
-		- Add a data-attribute to the div that corresponds the the index of the library array.
-			i.e. data-index="i"
-			I will ultimately be able to delete books from the library. I don't want to refresh,
-			so I will need the data-index attribute to upload after every deletion. Should be fine.
-		- Add a delete button to the bottom of each book div that will read the data-index
-			of the book div and hunt it down in myLibrary a remove it. It will then cycle
-			through all the book divs updating their data-index
-		- Add a read/unread toggle button to the bottom of each book div.
-			I will need an event listener outside of the function where the button is created.
-			This means that I will need to listen for all of the class of readBtns. When
-			one is pressed, I will need to identify which one that is and then use the data-index
-			to go in and edit the myLibrary entry. I will then nee to edit the html to reflect
-			the change.
-	*/
 }
 
 
@@ -117,7 +130,7 @@ btn.addEventListener('click', () => {
 		while (newBook.firstChild) {
 			newBook.removeChild(newBook.firstChild);
 		}
-
+		console.log(myLibrary);
 		// Replaced the removed "Add a New Book" button.
 		document.querySelector("#newBook").appendChild(btn);
 	});
