@@ -1,13 +1,16 @@
+
 // This is the primary array containing the library.
 let myLibrary = [];
 
 // Here is the constructor for making all of the Book objects.
-function Book(title, author, pageCount, haveRead) {
-	this.title = title;
-	this.author = author;
-	this.pageCount = pageCount;
-	this.haveRead = haveRead;
-	this.info = function() {
+class Book {
+	constructor(title, author, pageCount, haveRead) {
+		this.title = title;
+		this.author = author;
+		this.pageCount = pageCount;
+		this.haveRead = haveRead;
+	}
+	get info() {
 		return `${title} by ${author}, ${pageCount} pages, ${haveRead === true ? "Finished" : "Not Finished"}`;
 	}
 }
